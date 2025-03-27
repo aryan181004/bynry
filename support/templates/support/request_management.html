@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Request{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2>Request Details</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Customer:</strong> {{ request.customer.username }}</p>
+                        <p><strong>Account Number:</strong> {{ request.customer.account_number }}</p>
+                        <p><strong>Request Type:</strong> {{ request.request_type.name }}</p>
+                        <p><strong>Created:</strong> {{ request.created_at|date:"F j, Y, P" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Description:</strong></p>
+                        <p>{{ request.description }}</p>
+                        {% if request.attachment %}
+                            <p><strong>Attachment:</strong> <a href="{{ request.attachment.url }}" target="_blank">View File</a></p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Support Notes</h3>
+            </div>
+            <div class="card-body">
+                {% for note in support_notes %}
+                    <div class="border-bottom mb-3 pb-3">
+                        <p class="mb-1"><strong>{{ note.support_rep.username }}</strong> - {{ note.created_at|date:"F j, Y, P" }}</p>
+                        <p class="mb-0">{{ note.note }}</p>
+                    </div>
+                {% endfor %}
+
+                <form method="POST" class="mt-4">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Update Status:</label>
+                        <select name="status" id="status" class="form-select">
+                            {% for status in request.STATUS_CHOICES %}
+                                <option value="{{ status.0 }}" {% if request.status == status.0 %}selected{% endif %}>
+                                    {{ status.1 }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary">Add Note & Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h3>Customer Information</h3>
+            </div>
+            <div class="card-body">
+                <p><strong>Name:</strong> {{ request.customer.get_full_name|default:request.customer.username }}</p>
+                <p><strong>Email:</strong> {{ request.customer.email }}</p>
+                <p><strong>Phone:</strong> {{ request.customer.phone_number }}</p>
+                <p><strong>Address:</strong> {{ request.customer.address }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

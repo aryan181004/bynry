@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Request Details
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>Service Request Details</h2>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Request Type:</strong> {{ request.request_type.name }}</p>
+                <p><strong>Status:</strong> <span class="badge bg-{{ request.status|lower }}">{{ request.get_status_display }}</span></p>
+                <p><strong>Created:</strong> {{ request.created_at|date:"F j, Y, P" }}</p>
+                <p><strong>Last Updated:</strong> {{ request.updated_at|date:"F j, Y, P" }}</p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Description:</strong></p>
+                <p>{{ request.description }}</p>
+                {% if request.attachment %}
+                    <p><strong>Attachment:</strong> <a href="{{ request.attachment.url }}" target="_blank">View File</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
